@@ -1,0 +1,49 @@
+@import './tailwind.css';
+@import './reset.css';
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;800&display=swap');
+
+
+@keyframes feadIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+* {
+    font-family: 'Prompt', sans-serif !important;
+}
+
+::-webkit-scrollbar {
+    width: 4px;
+    height: 2.5px;
+}
+
+#sidebar::-webkit-scrollbar {
+    width: 0px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.815);
+    /* border-radius: 10px; */
+}
+
+::-webkit-scrollbar-track {
+    background-color: #222;
+}
+
+
+.feadIn {
+    animation: feadIn 1s !important;
+}
+
+.font_prompt {
+    font-family: 'Prompt', sans-serif;
+}
+
+.borderCardReport {
+    border: 1px solid #e0e0e0cb !important;
+    border-radius: 5px !important;
+}
