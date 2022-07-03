@@ -416,9 +416,9 @@ const History: NextPage = () => {
                                 listItemOfDate.length !== 0 ? 
                                 listItemOfDate.map((itemListDate: any, indexDate: number) => {
                                     return (
-                                        <div key={indexDate} className='borderCardReport bg-gray-50 p-4 rounded-md mb-10 border-2 border-red-400'>
+                                        <div key={indexDate} className='borderCardReport bg-gray-50 p-4 rounded-md mb-10'>
                                             <p className='col-start-1 col-span-3 ml-1 mt-1 mb-4'>{itemListDate.date}</p>
-                                            <div className='items-center mt-2 w-full bg-gray-200/50 shadow-sm rounded-lg lg:rounded-l-lg p-1 lg:p-2 grid grid-cols-[1fr_50px_52px_40px] lg:grid-cols-[40px_1fr_80px_52px_40px] gap-x-4 lg:gap-x-12'>
+                                            <div className='items-center mt-2 w-full bg-gray-200/50 shadow-sm rounded-lg lg:rounded-l-lg p-1 lg:p-2 grid grid-cols-[1fr_50px_24px_40px] lg:grid-cols-[40px_1fr_80px_24px_40px] gap-x-4 lg:gap-x-12'>
                                                 <p className='hidden lg:block text-sm lg:text-base text-center w-full'>ลำดับ</p>
                                                 <p className='text-sm lg:text-base text-left w-full'>รายการ</p>
                                                 <p className='text-sm lg:text-base text-right w-full flex flex-row'>จำนวน<span className='hidden lg:block'>เงิน</span></p>
@@ -432,7 +432,7 @@ const History: NextPage = () => {
                                                 }
                                                 {itemListDate.income.map((item: any, index: number) => {
                                                     return (
-                                                        <div key={index} className='w-full grid grid-cols-[1fr_50px_52px_40px] lg:grid-cols-[40px_1fr_80px_52px_40px] gap-x-4 lg:gap-x-12 gap-y-2'>
+                                                        <div key={index} className='w-full grid grid-cols-[1fr_50px_24px_40px] lg:grid-cols-[40px_1fr_80px_24px_40px] gap-x-4 lg:gap-x-12 mb-1 mt-1'>
                                                             <p className='hidden lg:block text-sm lg:text-base text-center'>{index + 1}.</p>
                                                             <p className='ml-1 text-sm lg:text-base text-left'>{item.name}</p>
                                                             <p className={`ml-1 text-sm lg:text-base text-right ${item.type === 1 && 'text-green-800'}`}>
@@ -446,13 +446,13 @@ const History: NextPage = () => {
                                                 {
                                                     itemListDate.expense.length > 0 &&
                                                     <div className='w-full mt-2 mb-1'>
-                                                        <div className='w-full h-[1px] bg-black/20 mb-3.5'></div>
+                                                        <div className='w-full h-[1px] bg-black/10 border-[0.5px] mb-8'></div>
                                                         <p className='w-full text-red-800 text-sm underline'>รายจ่าย</p>
                                                     </div>
                                                 }
                                                 {itemListDate.expense.map((item: any, index: number) => {
                                                     return (
-                                                        <div key={index} className='w-full grid grid-cols-[1fr_50px_52px_40px] lg:grid-cols-[40px_1fr_80px_52px_40px] gap-x-4 lg:gap-x-12 gap-y-2'>
+                                                        <div key={index} className='w-full grid grid-cols-[1fr_50px_24px_40px] lg:grid-cols-[40px_1fr_80px_24px_40px] gap-x-4 lg:gap-x-12 mb-1 mt-1'>
                                                         <p className='hidden lg:block text-sm lg:text-base text-center'>{index + 1}.</p>
                                                         <p className='ml-1 text-sm lg:text-base text-left'>{item.name}</p>
                                                         <p className={`ml-1 text-sm lg:text-base text-right ${item.type === 0 && 'text-red-800'}`}>

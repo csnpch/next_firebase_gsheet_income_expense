@@ -375,7 +375,7 @@ const Push: NextPage = () => {
                                 <Button variant="contained" className='py-8 px-20 text-lg'>รายจ่าย</Button> */}
                                 <Button 
                                     variant="outlined" 
-                                    className={`btnSelectType md:text-lg ${!btnTypeActiveStatus && classBtnTypeActive}`}
+                                    className={`btnSelectType md:text-lg px-8 py-1 ${!btnTypeActiveStatus && classBtnTypeActive}`}
                                     onClick={() => {
                                         setActiveStatusType(false);
                                         setItemType(1);
@@ -385,7 +385,7 @@ const Push: NextPage = () => {
                                 </Button>
                                 <Button 
                                     variant="outlined" 
-                                    className={`btnSelectType md:text-lg ${btnTypeActiveStatus && classBtnTypeActive}`}
+                                    className={`btnSelectType md:text-lg px-8 py-1 ${btnTypeActiveStatus && classBtnTypeActive}`}
                                     onClick={() => {
                                         setActiveStatusType(true);
                                         setItemType(0);
