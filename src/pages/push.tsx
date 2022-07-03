@@ -1,6 +1,11 @@
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react';
+
+//- API
+import axios from 'axios';
+import axiosConfig from './../utils/axios/config';
+
 //- Database
 import db from '../utils/firebase/config';
 import { collection, doc, getDocs, setDoc, deleteDoc } from 'firebase/firestore';
@@ -8,7 +13,6 @@ import ObjectID from 'bson-objectid';
 
 // import Link from 'next/link';
 import Swal from 'sweetalert2';
-
 
 //- Components
 import Navbar from '../components/navbar';
@@ -32,8 +36,6 @@ const Push: NextPage = () => {
     const [statusOnEdit, setStatusOnEdit] = useState<boolean>(false);
     const [statusIncome, setStatusInCome] = useState<boolean>(false);
     const [statusExpenses, setStatusExpenses] = useState<boolean>(false);
-    const [totalIncome, setTotalIncome] = useState<number>(0)
-    const [totalExpenses, setTotalExpenses] = useState<number>(0)
 
     const [itemType, setItemType] = useState<number>(1);
     const [itemName, setItemName] = useState<string>('');
@@ -42,6 +44,55 @@ const Push: NextPage = () => {
     
     const classBtnTypeActive = 'bg-blue-600 text-white';
     const [btnTypeActiveStatus, setActiveStatusType] = useState<boolean>(false);
+
+    async function test() {
+        await axios.get(`https://notify-api.line.me/api/notify`)
+            .then(res => {
+                console.log(res);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        // await axios.post(`https://203.104.138.174/api/notify`,{
+        //     message: `คุณ${who} ได้เริ่มทำการบันทึกรายรับรายจ่ายแล้ว`,
+        // }, {
+        //     headers: {
+        //         "Content-Type": "application/x-www-form-urlencoded",
+        //         "Authorization": `Bearer ${axiosConfig.token.line}` 
+        //     }
+        // })
+        // .then(res => {
+        //     console.log(res.data);
+        // })
+        // .catch(err => {
+        //     console.log(err);
+        //     console.log(err.status);
+        // });
+    }
+
+    useEffect(() => {
+        (async () => {
+            await test();
+        })();
+        // axios.post(`https://notify-api.line.me/api/notify`,{
+        //     message: `คุณ${who} ได้เริ่มทำการบันทึกรายรับรายจ่ายแล้ว`,
+        //     access_token: `Bw2gGNlG9n3IyxhG2k7zpfsuLbnXCGjj01rap4exgsn`
+        // }
+        // // , {
+        // //     headers: {
+        // //         "Content-Type": "application/x-www-form-urlencoded",
+        // //         Authorization: `Bearer ${axiosConfig.token.line}` 
+        // //     }
+        // // }
+        // )
+        // .then(res => {
+        //     console.log(res.data);
+        // })
+        // .catch(err => {
+        //     console.log(err);
+        //     console.log(err.status);
+        // });
+    }, [])
 
 
     useEffect(() => {
@@ -156,16 +207,52 @@ const Push: NextPage = () => {
             if (statusOnInsert) {
 
                 let objId = ObjectID().toString();
+
+                let getWhoTH = (who === 'dad' ? 'พ่อ' : who === 'mom' && 'แม่'); 
+
                 let transaction = {
                     who: who || null,
-                    whoName: ((who === 'dad' || who === 'mom') ? who : localStorage.getItem('name') || 'other'),
+                    whoName: ((who === 'dad' || who === 'mom') ? getWhoTH : localStorage.getItem('name') || 'other'),
                     name: itemName,
                     type: itemType,
                     amount: itemAmount,
                     created_at: new Date().toISOString()
                 }
                 
-                await setDoc(doc(db, 'transaction', objId), transaction);
+                await setDoc(doc(db, 'transaction', objId), transaction).then(() => {
+                    // success
+                    console.log('listItem = ', listItem)
+                    if (listItem.length === 0) {
+                        axios.post(`https://203.104.138.174/api/notify`,{
+                            message: `คุณ${who} ได้เริ่มทำการบันทึกรายรับรายจ่ายแล้ว`,
+                            access_token: `Bw2gGNlG9n3IyxhG2k7zpfsuLbnXCGjj01rap4exgsn`
+                        }
+                        // , {
+                        //     headers: {
+                        //         "Content-Type": "application/x-www-form-urlencoded",
+                        //         Authorization: `Bearer ${axiosConfig.token.line}` 
+                        //     }
+                        // }
+                        )
+                        .then(res => {
+                            console.log(res.data);
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            console.log(err.status);
+                        });
+                    }
+
+                }).catch(() => {
+                    Swal.fire({
+                        title: 'ไม่สามารถบันทึกข้อมูลได้',
+                        text: 'กรุณาลองใหม่อีกครั้ง',
+                        icon: 'error',
+                        confirmButtonText: 'ตกลง'
+                    });
+                })
+
+                
                 setListItem([...listItem, {
                     objId: objId,
                     who: transaction.who,
@@ -175,6 +262,7 @@ const Push: NextPage = () => {
                     amount: transaction.amount,
                     created_at: transaction.created_at
                 }]);
+
             }
                 
             if (!statusOnEdit) {
@@ -184,7 +272,6 @@ const Push: NextPage = () => {
             }
             setStatusOnInsert(false);
             clearForm();
-            
             
         } else {
             Swal.fire({
@@ -254,8 +341,8 @@ const Push: NextPage = () => {
                     
                     {
                         (who === 'other') &&
-                        <div className='mt-8 -mb-4 text-xl'>
-                            {localStorage.getItem('name') || 'other'}
+                        <div className='mt-8 md:mt-20 -mb-4 text-xl flex flex-row'>
+                            บันทึกโดย : <p className='text-blue-900 ml-2'>" {localStorage.getItem('name') || 'other'} "</p>
                         </div>
                     }
                     

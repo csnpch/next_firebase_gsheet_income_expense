@@ -15,7 +15,7 @@ const Navbar = () => {
     
     useEffect(() => {
         if (router.pathname === '/history') {
-            setPathRightNavigator({path: '/push', 'name': 'ย้อนกลับ'})
+            setPathRightNavigator({path: '/', 'name': 'ย้อนกลับ'})
         }
     }, [])
 
