@@ -73,7 +73,7 @@ const History: NextPage = () => {
         })
 
         axios.post(`${axiosConfig.baseUrl.backend}/line/notify`,{
-            message: `คุณแฮม : ได้ส่งออกข้อมูลเดือนที่ผ่านมาไปยัง Google Sheet แล้ว :D`,
+            message: `คุณแฮม : ได้ทำการส่งออกข้อมูลเดือนที่ผ่านมาไปยัง Google Sheet แล้ว :D`,
             access_token: `Bw2gGNlG9n3IyxhG2k7zpfsuLbnXCGjj01rap4exgsn`
         })
         .catch(err => {
