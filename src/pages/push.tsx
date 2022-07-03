@@ -45,55 +45,9 @@ const Push: NextPage = () => {
     const classBtnTypeActive = 'bg-blue-600 text-white';
     const [btnTypeActiveStatus, setActiveStatusType] = useState<boolean>(false);
 
-    async function test() {
-        await axios.get(`https://notify-api.line.me/api/notify`)
-            .then(res => {
-                console.log(res);
-            })
-            .catch(err => {
-                console.log(err);
-            })
-        // await axios.post(`https://203.104.138.174/api/notify`,{
-        //     message: `คุณ${who} ได้เริ่มทำการบันทึกรายรับรายจ่ายแล้ว`,
-        // }, {
-        //     headers: {
-        //         "Content-Type": "application/x-www-form-urlencoded",
-        //         "Authorization": `Bearer ${axiosConfig.token.line}` 
-        //     }
-        // })
-        // .then(res => {
-        //     console.log(res.data);
-        // })
-        // .catch(err => {
-        //     console.log(err);
-        //     console.log(err.status);
-        // });
+    const getNameForNoti = (): string => {
+        return 'คุณ' + (who === 'dad' ? 'พ่อ' : (who === 'mom' ? 'แม่' : (localStorage.getItem('name') + ' - บุคคลอื่น' || 'อื่น ๆ ไร้นาม')))
     }
-
-    useEffect(() => {
-        (async () => {
-            await test();
-        })();
-        // axios.post(`https://notify-api.line.me/api/notify`,{
-        //     message: `คุณ${who} ได้เริ่มทำการบันทึกรายรับรายจ่ายแล้ว`,
-        //     access_token: `Bw2gGNlG9n3IyxhG2k7zpfsuLbnXCGjj01rap4exgsn`
-        // }
-        // // , {
-        // //     headers: {
-        // //         "Content-Type": "application/x-www-form-urlencoded",
-        // //         Authorization: `Bearer ${axiosConfig.token.line}` 
-        // //     }
-        // // }
-        // )
-        // .then(res => {
-        //     console.log(res.data);
-        // })
-        // .catch(err => {
-        //     console.log(err);
-        //     console.log(err.status);
-        // });
-    }, [])
-
 
     useEffect(() => {
 
@@ -221,25 +175,18 @@ const Push: NextPage = () => {
                 
                 await setDoc(doc(db, 'transaction', objId), transaction).then(() => {
                     // success
-                    console.log('listItem = ', listItem)
                     if (listItem.length === 0) {
-                        axios.post(`https://203.104.138.174/api/notify`,{
-                            message: `คุณ${who} ได้เริ่มทำการบันทึกรายรับรายจ่ายแล้ว`,
+                        axios.post(`${axiosConfig.baseUrl.backend}/line/notify`,{
+                            message: `\n\n${getNameForNoti()} : ได้เริ่มทำการ\nบันทึกรายรับรายจ่าย\n**สำหรับวันนี้แล้ว !!`,
                             access_token: `Bw2gGNlG9n3IyxhG2k7zpfsuLbnXCGjj01rap4exgsn`
-                        }
-                        // , {
-                        //     headers: {
-                        //         "Content-Type": "application/x-www-form-urlencoded",
-                        //         Authorization: `Bearer ${axiosConfig.token.line}` 
-                        //     }
-                        // }
-                        )
-                        .then(res => {
-                            console.log(res.data);
                         })
                         .catch(err => {
-                            console.log(err);
-                            console.log(err.status);
+                            Swal.fire({
+                                title: 'เกิดข้อผิดพลาด',
+                                text: 'โปรดลองใหม่อีกครั้ง',
+                                icon: 'error',
+                                confirmButtonText: 'เข้าใจแล้ว'
+                            });
                         });
                     }
 
@@ -297,17 +244,12 @@ const Push: NextPage = () => {
 
         onDelete(item);
         setListItem(listItem.filter((val: any) => val.objId != item.objId));
-        console.log('listItem', listItem)
-
-        console.log('onEdit', item)
     }
 
     const onDelete = async (item: object): void => {
-        console.log('onDel', item)
         setListItem(listItem.filter((val: any) => val.objId != item.objId));
         await deleteDoc(doc(db, 'transaction', item.objId));
 
-        console.log('listItem.length', listItem.length)
         if (listItem.length === 1) {
             setStatusOnInsert(true);
         }

@@ -1,8 +1,12 @@
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, doc, getDocs, deleteDoc } from 'firebase/firestore';
 import db from '../utils/firebase/config';
+
+//- API
+import axios from 'axios';
+import axiosConfig from './../utils/axios/config';
 
 //- Components MUI
 import InputLabel from '@mui/material/InputLabel';
@@ -45,9 +49,38 @@ const History: NextPage = () => {
         { name: 'December', number: 12 },
     ]);
 
-    
+
     const sendDataToSheet = () => {
-        console.log(listDataForSheet);
+
+        // for each item in listDataForSheet and assign value to key objId = {...listDataForSheet[i]}
+        var listDataAppentToSheet: any = listDataForSheet.map((item: any) => {
+            return { ...item, objId: item.objId, data_json: JSON.stringify(item) }
+        });
+
+        axios.post(`${axiosConfig.baseUrl.sheet}/${axiosConfig.token.sheet}`,
+            listDataAppentToSheet
+        ).then((res) => {
+            let docRef: any = null;
+            listDataAppentToSheet.forEach((item: any) => {
+                docRef = doc(db, 'transaction', item.objId);
+                deleteDoc(docRef);
+            });
+            console.log('success pust to sheet', res);
+            alert('Push to gSheet Successfully.');
+            router.reload();
+        }).catch((err) => {
+            console.log('err', err);
+        })
+
+        axios.post(`${axiosConfig.baseUrl.backend}/line/notify`,{
+            message: `คุณแฮม : ได้ส่งออกข้อมูลเดือนที่ผ่านมาไปยัง Google Sheet แล้ว :D`,
+            access_token: `Bw2gGNlG9n3IyxhG2k7zpfsuLbnXCGjj01rap4exgsn`
+        })
+        .catch(err => {
+            alert('เกิดข้อผิดพลาดในการส่ง line notification! (err log to console)');
+            console.log('error', err)
+        });
+
     }
 
 
@@ -264,7 +297,8 @@ const History: NextPage = () => {
                             amount: item.amount,
                             who: item.whoName || 'other',
                             type: (item.type === 1 ? 'รายรับ' : 'รายจ่าย'),
-                            created_at: item.created_at
+                            created_at: item.created_at,
+                            objId: item.objId
                         });
                     });
                     valOfItemAll.expense.forEach((item: any) => {
@@ -274,7 +308,8 @@ const History: NextPage = () => {
                             amount: item.amount,
                             who: item.whoName || 'other',
                             type: (item.type === 1 ? 'รายรับ' : 'รายจ่าย'),
-                            created_at: item.created_at
+                            created_at: item.created_at,
+                            objId: item.objId
                         });
                     });
                     totalIncomeOfMonth += valOfItemAll.totalIncome;
@@ -299,7 +334,7 @@ const History: NextPage = () => {
             })
 
             dataForSheet.push({
-                time_stamp: addZeroFrontDateFormat(now.getDate() + '/' + (now.getMonth() + 1) + '/' + now.getFullYear()),
+                time_stamp: 'วันที่ส่งออกสรุป : ' + addZeroFrontDateFormat(now.getDate() + '/' + (now.getMonth() + 1) + '/' + now.getFullYear()),
                 income_of_month: totalIncomeOfMonth,
                 expense_of_month: totalExpenseOfMonth,
                 summarize_of_month: totalIncomeOfMonth - totalExpenseOfMonth
@@ -307,7 +342,8 @@ const History: NextPage = () => {
             
             if (statusPushTotalOfYear) {
                 dataForSheet.push({
-                    time_stamp: addZeroFrontDateFormat(now.getDate() + '/' + (now.getMonth() + 1) + '/' + now.getFullYear()),
+                    created_at: 'วันที่ส่งออกสรุป : ' + addZeroFrontDateFormat(now.getDate() + '/' + (now.getMonth() + 1) + '/' + now.getFullYear()),
+                    time_stamp: now.getFullYear() - 1,
                     income_of_year: totalIncomeOfYear,
                     expense_of_year: totalExpenseOfYear,
                     summarize_of_year: totalIncomeOfYear - totalExpenseOfYear
