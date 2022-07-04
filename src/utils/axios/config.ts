@@ -1,5 +1,5 @@
 const baseUrl = {
-    backend: 'https://incopens.herokuapp.com/line/notify',
+    backend: 'https://incopens.herokuapp.com',
     line: "https://notify-api.line.me",
     sheet: "https://sheetdb.io/api/v1/",
 };
