@@ -37,7 +37,7 @@ const Push: NextPage = () => {
     const [statusIncome, setStatusInCome] = useState<boolean>(false);
     const [statusExpenses, setStatusExpenses] = useState<boolean>(false);
 
-    const [itemType, setItemType] = useState<number>(1);
+    const [itemType, setItemType] = useState<number>(0);
     const [itemName, setItemName] = useState<string>('');
     const [itemAmount, setItemAmount] = useState<number>();
     const [listItem, setListItem] = useState<object>([]);
@@ -366,7 +366,7 @@ const Push: NextPage = () => {
                             <div className={`
                                 -mt-6 mb-6 w-10/12 xl:w-2/12 h-[2.5px] bg-black rounded-full opacity-60 shadow-md 
                                 transition-all duration-1000
-                                ${btnTypeActiveStatus ? 'bg-red-600' : 'bg-green-600'}`}
+                                ${!btnTypeActiveStatus ? 'bg-red-600' : 'bg-green-600'}`}
                             ></div>
                             
                             <p>เลือกรายการที่ต้องการเพิ่ม</p>
@@ -378,20 +378,20 @@ const Push: NextPage = () => {
                                     className={`btnSelectType md:text-lg px-8 py-1 ${!btnTypeActiveStatus && classBtnTypeActive}`}
                                     onClick={() => {
                                         setActiveStatusType(false);
-                                        setItemType(1);
+                                        setItemType(0);
                                     }}
                                 >
-                                    รายรับ
+                                    รายจ่าย
                                 </Button>
                                 <Button 
                                     variant="outlined" 
                                     className={`btnSelectType md:text-lg px-8 py-1 ${btnTypeActiveStatus && classBtnTypeActive}`}
                                     onClick={() => {
                                         setActiveStatusType(true);
-                                        setItemType(0);
+                                        setItemType(1);
                                     }}
                                 >
-                                    รายจ่าย
+                                    รายรับ
                                 </Button>
                             </Stack>
                             
